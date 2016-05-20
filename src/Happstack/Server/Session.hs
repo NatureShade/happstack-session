@@ -7,8 +7,8 @@ License     : MIT
 Maintainer  : birktjelmeland@yahoo.no
 Stability   : experimental
 Portability : POSIX
+Serverside sessions for Happstack. Currently highly experimental and API might change without notice. Must be used together with a Storage Backend, see "Happstack.Server.Session.Memory".
 
-Serverside sessions for Happstack. Curently highly experimental and api might change without notice. Must be used together with a Storage Backend. See "Happstack.Server.Session.Memory" as an example.
 -}
 module Happstack.Server.Session (Session(..), SessionConfig(..), mkSessionConfig, SessionHandler, startSession, getSession, setSession, updateSession, deleteSession) where
 
@@ -49,10 +49,6 @@ data Session a b = Session {
         sessionData   :: b
     } deriving (Show)
 
---type GetSession    = (a -> IO (Session a b))
---type SetSession    = (b -> Word64 -> IO (Session a b))
---type UpdateSession = (a -> b -> IO (Session a b))
---type DeleteSession = (a -> IO ())
 
 -- | Configuration for session. See 'mkSessionConfig'
 data SessionConfig a = SessionConfig {
@@ -63,6 +59,9 @@ data SessionConfig a = SessionConfig {
 -- | Make the 'SessionConfig' to be used with startSession.
 --  Uses AES128 cipher in cbc mode to encrypt session IDs.
 --  This function will fail with a error if a invalid key or IV is used.
+--
+--  If an other encryption algorithm than AES128 is wanted "SessionConfig" can be constructed t.
+--
 --  The AES key and IV pair can be constructed using the OpenSSL command where secret is the password you would like to use.
 --  See https://www.openssl.org/docs/manmaster/apps/enc.html
 --
@@ -89,7 +88,7 @@ mkSessionConfig key iv = SessionConfig {
 -- | Session handler to be used with 'getSession', 'setSession', 'updateSession' and 'deleteSession'
 data SessionHandler a b = SessionHandler (SessionConfig a) (a -> IO (Maybe (Session a b))) (b -> Word64 -> IO (Session a b)) (a -> b -> IO  (Maybe (Session a b))) (a -> IO ())
 
--- | Creates a 'SessionHandler' from 'SessionConfig' and a session handler constructor
+-- | Creates a 'SessionHandler' from 'SessionConfig' and a session handler constructor.
 -- Example:
 --
 -- > import Happstack.Server.Session
@@ -122,7 +121,7 @@ getSession sessionHandler@(SessionHandler sessionConfig getSession' _ _ _) = msu
         return Nothing
     ]
 
--- | Sets a session. DO NOT USE this function if user is not verified in some sort of way, by login, chapta, etc. Current versions of Happstack-session do not preform automatic deletions on outdated sessions which may pose a security risk if all users are allowed to register a session without verification.
+-- | Sets a session. DO NOT USE this function if user is not verified in some sort of way, by login, CAPTCHA, etc. Current versions of Happstack-session do not preform automatic deletions on outdated sessions which may pose a security risk if all users are allowed to register a session without verification.
 setSession :: (MonadIO m, FilterMonad Response m, Show a) =>
               (SessionHandler a b)
            -> b      -- ^ Session data
@@ -134,7 +133,7 @@ setSession  (SessionHandler sessionConfig _ setSession' _ _) dat expiry = do
     addCookie (MaxAge $ fromIntegral expiry) $ mkCookie "SID" $ sessionAuthEncrypt sessionConfig $ sessionId session
     return ()
 
--- | Updates session value. Note: current versions of Happstack-session do not allow for updating session expiry
+-- | Updates session value. Note: current versions of Happstack-session do not allow for updating session expiry.
 updateSession :: (MonadPlus m, MonadIO m, FilterMonad Response m, HasRqData m, Read a) =>
                  (SessionHandler a b)
               -> b -- ^ New session data
@@ -154,7 +153,7 @@ updateSession sessionHandler@(SessionHandler sessionConfig _ _ updateSession' _)
         return ()
     ]
 
--- | Deletes session
+-- | Deletes session.
 deleteSession :: (MonadPlus m, MonadIO m, FilterMonad Response m, HasRqData m, Read a) => (SessionHandler a b) -> m ()
 deleteSession (SessionHandler sessionConfig _ _ _ deleteSession') = msum
     [ do

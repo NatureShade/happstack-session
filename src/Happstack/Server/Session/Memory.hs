@@ -23,7 +23,7 @@ import Data.Word
 import Data.IORef
 
 
--- | Constructs value to be used with 'startSession'
+-- | Constructs value to be used with 'startSession'.
 memoryStartSession :: IO ((Int -> IO (Maybe (Session Int a))), (a -> Word64 -> IO (Session Int a)), (Int -> a -> IO (Maybe (Session Int a))), (Int -> IO ()))
 memoryStartSession = do
     ref <- newIORef (IM.empty, 0)
