@@ -60,7 +60,7 @@ See hackage for documentation.
         a ! href "/delSession" $ "Delete session"
 
     setS sessionHandler = do
-        setSession sessionHandler (MyData "Birk") 99999
+        setSession sessionHandler (MyData "Test") 99999
         ok $ template "test" $ do
             H.h1 "Session is set"
             a ! href "/" $ "Home"
