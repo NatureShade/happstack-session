@@ -16,7 +16,7 @@ version:             0.0.0.1
 synopsis:            Serverside sessions for Happstack
 
 -- A longer description of the package.
-description: Serverside sessions for Happstack. Should be used with a storage backend, however the Memory works for testing. See github page for example.
+description: Serverside sessions for Happstack. Currently highly experimental and API might change without notice. Must be used together with a dedicated Storage Backend
 
 -- The license under which the package is released.
 license:             MIT

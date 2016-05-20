@@ -7,7 +7,7 @@ License     : MIT
 Maintainer  : birktjelmeland@yahoo.no
 Stability   : experimental
 Portability : POSIX
-Serverside sessions for Happstack. Currently highly experimental and API might change without notice. Must be used together with a Storage Backend, see "Happstack.Server.Session.Memory".
+Serverside sessions for Happstack. Currently highly experimental and API might change without notice. Must be used together with a dedicated Storage Backend, see "Happstack.Server.Session.Memory".
 
 -}
 module Happstack.Server.Session (Session(..), SessionConfig(..), mkSessionConfig, SessionHandler, startSession, getSession, setSession, updateSession, deleteSession) where
