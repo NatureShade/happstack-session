@@ -16,7 +16,7 @@ version:             0.0.0.1
 synopsis:            Serverside sessions for Happstack
 
 -- A longer description of the package.
--- description:
+description: Serverside sessions for Happstack. Should be used with a storage backend, however the Memory works for testing. See github page for example.
 
 -- The license under which the package is released.
 license:             MIT
@@ -38,6 +38,8 @@ category:            Web
 
 build-type:          Simple
 
+homepage: https://github.com/NatureShade/happstack-session
+
 -- Extra files to be distributed with the package, such as examples or a
 -- README.
 -- extra-source-files:
@@ -45,8 +47,6 @@ build-type:          Simple
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
-description:
-Serverside sessions for Happstack. Should be used with a storage backend, however the Memory works for testing.
 
 library
   -- Modules exported by the library.

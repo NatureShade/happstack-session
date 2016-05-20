@@ -113,7 +113,7 @@ getSession sessionHandler@(SessionHandler sessionConfig getSession' _ _ _) = msu
         let sid = sessionAuthDecrypt sessionConfig sid'
         session <- maybe (return Nothing) (liftIO . getSession') sid
         timeNow <- liftIO $ fmap (floor) getPOSIXTime
-        if ( fromMaybe False $ (> timeNow) . sessionExpire <$> session ) then do
+        if ( fromMaybe False $ (< timeNow) . sessionExpire <$> session ) then do
             deleteSession sessionHandler
             return Nothing
         else
